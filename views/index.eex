@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/public/spectre.css">
+    <script type="text/javascript" src="/public/vue.js"></script>
+    <meta charset="utf-8">
+    <style>
+      body, html {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0
+      }
+
+      #email_body {
+        border: 0;
+        width: 100%;
+        display: block;
+        height: 100%;
+        overflow-y: scroll
+      }
+
+      .unread {
+        font-weight: bold
+      }
+
+      .selected-email {
+        font-size: 0.85em;
+        background: #eee;
+        border-bottom: .05rem solid #e7e9ed;
+      }
+    </style>
+  </head>
+  <body>
+	  <div id="emails">
+			<div class="container">
+				<header class="navbar">
+					<section class="navbar-section">
+						<a href="/" class="navbar-brand mr-2">Àgata</a>
+					</section>
+					<section class="navbar-section">
+						<a href="https://github.com/alfonsojimenez/agata" class="btn btn-link">GitHub</a>
+					</section>
+				</header>
+        <div style="height: 215px; overflow-y: scroll">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Subject</th>
+								<th>Date</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-bind:class="[email.unread ? 'unread' : '']" v-for="email in emails" v-on:click="displayEmail(email, event)" class="c-hand" style="font-size: 0.82em; line-height: 0.45em">
+								<td>{{ email.from }}</td>
+								<td>{{ email.to }}</td>
+								<td>{{ email.subject }}</td>
+								<td>{{ email.delivery }}</td>
+							</tr>
+						</tbody>
+					</table>
+        </div>
+			</div>
+
+			<div class="empty" v-show="emails.length == 0">
+				<p class="empty-title h5">There is no emails</p>
+				<p class="empty-subtitle">Received emails will appear here</p>
+			</div>
+
+			<div class="container selected-email" v-show="selectedEmail">
+        <span><strong>Received:</strong> {{ selectedEmail.delivery }}</span>
+        <span><strong>From:</strong> {{ selectedEmail.from }}</span>
+        <span><strong>To:</strong> {{ selectedEmail.to }}</span>
+        <span><strong>Attachments:</strong> <span v-for="attachment in selectedEmail.attachments">
+            <a v-bind:href="/tmp/ + attachment" target="blank">{{ attachment }}</a>
+          </span>
+        </span>
+			</div>
+    </div>
+    <iframe id="email_body"></iframe>
+    <script type="text/javascript">
+      var data = { emails: <%= emails %>.reverse(), selectedEmail: false }
+
+      var app = new Vue({
+        el: '#emails',
+        data: data,
+        methods: {
+          displayEmail: function (email, event) {
+            socket.send(['read', email.id]);
+
+            email.unread = false;
+
+            this.selectedEmail = email;
+
+						iframe.document.open();
+						iframe.document.write(email.html);
+						iframe.document.close();
+          }
+        }
+      })
+
+      host = window.location.hostname + ":<%= Application.get_env(:agata, :http_port) %>"
+
+      var socket = new WebSocket('ws://' + host + '/ws');
+      var iframe = document.getElementById('email_body');
+      iframe = iframe.contentWindow || (iframe.contentDocument.document || iframe.contentDocument);
+
+      socket.onmessage = function (event) {
+        try {
+          app.emails.unshift(JSON.parse(event.data));
+        } catch (e) {
+          console.log(event.data);
+        }
+      }
+
+      socket.onclose = function (event) {
+        console.log('Web socket connection was closed');
+      }
+    </script>
+  </body>
+</html>
