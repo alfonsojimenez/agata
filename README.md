@@ -17,7 +17,7 @@ Inspired in Ruby [mailcatcher](https://github.com/sj26/mailcatcher).
 1. `git clone git@github.com:alfonsojimenez/agata.git`
 2. `mix deps.get`
 3. `mix run --no-halt`
-4. Open http://127.0.0.1:1080/
+4. Open http://127.0.0.1:8080/
 
 ## Usage
 
