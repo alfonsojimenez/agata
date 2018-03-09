@@ -32,44 +32,44 @@
     </style>
   </head>
   <body>
-	  <div id="emails">
-			<div class="container">
-				<header class="navbar">
-					<section class="navbar-section">
-						<a href="/" class="navbar-brand mr-2">Àgata</a>
-					</section>
-					<section class="navbar-section">
-						<a href="https://github.com/alfonsojimenez/agata" class="btn btn-link">GitHub</a>
-					</section>
-				</header>
+    <div id="emails">
+      <div class="container">
+        <header class="navbar">
+          <section class="navbar-section">
+            <a href="/" class="navbar-brand mr-2">Àgata</a>
+          </section>
+          <section class="navbar-section">
+            <a href="https://github.com/alfonsojimenez/agata" class="btn btn-link">GitHub</a>
+          </section>
+        </header>
         <div style="height: 215px; overflow-y: scroll">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>From</th>
-								<th>To</th>
-								<th>Subject</th>
-								<th>Date</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr v-bind:class="[email.unread ? 'unread' : '']" v-for="email in emails" v-on:click="displayEmail(email, event)" class="c-hand" style="font-size: 0.82em; line-height: 0.45em">
-								<td>{{ email.from }}</td>
-								<td>{{ email.to }}</td>
-								<td>{{ email.subject }}</td>
-								<td>{{ email.delivery }}</td>
-							</tr>
-						</tbody>
-					</table>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Subject</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-bind:class="[email.unread ? 'unread' : '']" v-for="email in emails" v-on:click="displayEmail(email, event)" class="c-hand" style="font-size: 0.82em; line-height: 0.45em">
+                <td>{{ email.from }}</td>
+                <td>{{ email.to }}</td>
+                <td>{{ email.subject }}</td>
+                <td>{{ email.delivery }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-			</div>
+      </div>
 
-			<div class="empty" v-show="emails.length == 0">
-				<p class="empty-title h5">There is no emails</p>
-				<p class="empty-subtitle">Received emails will appear here</p>
-			</div>
+      <div class="empty" v-show="emails.length == 0">
+        <p class="empty-title h5">There is no emails</p>
+        <p class="empty-subtitle">Received emails will appear here</p>
+      </div>
 
-			<div class="container selected-email" v-show="selectedEmail">
+      <div class="container selected-email" v-show="selectedEmail">
         <span><strong>Received:</strong> {{ selectedEmail.delivery }}</span>
         <span><strong>From:</strong> {{ selectedEmail.from }}</span>
         <span><strong>To:</strong> {{ selectedEmail.to }}</span>
@@ -77,7 +77,7 @@
             <a v-bind:href="/tmp/ + attachment" target="blank">{{ attachment }}</a>
           </span>
         </span>
-			</div>
+      </div>
     </div>
     <iframe id="email_body"></iframe>
     <script type="text/javascript">
@@ -94,9 +94,9 @@
 
             this.selectedEmail = email;
 
-						iframe.document.open();
-						iframe.document.write(email.html);
-						iframe.document.close();
+            iframe.document.open();
+            iframe.document.write(email.html);
+            iframe.document.close();
           }
         }
       })
