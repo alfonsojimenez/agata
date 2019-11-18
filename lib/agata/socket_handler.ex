@@ -1,37 +1,31 @@
 defmodule Agata.SocketHandler do
   @behaviour :cowboy_websocket
 
-  def init(_, _, _) do
-    {:upgrade, :protocol, :cowboy_websocket}
+  def init(req, state) do
+    {:cowboy_websocket, req, state}
   end
 
-  @timeout Application.get_env(:agata, :web_socket_timeout)
-
-  def websocket_init(_, req, _) do
+  def websocket_init(_state) do
     Agata.Clients.join(self())
 
-    {:ok, req, %{}, @timeout}
+    {:ok, %{}}
   end
 
-  def websocket_info({:send_message, message}, req, state) do
-    {:reply, {:text, message}, req, state}
+	def websocket_handle({:text, "read," <> id}, state) do
+		Agata.Storage.mark_as_read(String.to_integer(id))
+
+		{:ok, state}
+	end
+
+  def websocket_handle({:noreply, _}, state) do
+    {:ok, state}
   end
 
-  def websocket_handle({:text, "ping"}, req, state) do
-    {:reply, {:text, "pong"}, req, state}
+  def websocket_info({:send_message, message}, state) do
+    {:reply, {:text, message}, state}
   end
 
-  def websocket_handle({:text, "read," <> id}, req, state) do
-    Agata.Storage.mark_as_read(String.to_integer(id))
-
-    {:ok, req, state}
-  end
-
-  def websocket_handle({:text, _}, req, state) do
-    {:ok, req, state}
-  end
-
-  def websocket_terminate(_, _, _) do
+  def terminate(_reason, _req, _state) do
     Agata.Clients.leave(self())
 
     :ok

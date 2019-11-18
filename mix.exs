@@ -5,7 +5,7 @@ defmodule Agata.Mixfile do
     [
       app: :agata,
       version: "0.1.0",
-      elixir: "~> 1.4",
+      elixir: "~> 1.7",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps()
@@ -21,12 +21,13 @@ defmodule Agata.Mixfile do
 
   defp deps do
     [
-      {:cowboy, "~> 1.1"},
-      {:eiconv, github: "zotonic/eiconv"},
+      {:cowboy, "~> 2.7"},
+      {:eiconv, "~> 1.0"},
       {:expug, "~> 0.9"},
-      {:mailman, "~> 0.3.0"},
-      {:plug, "~> 1.4"},
-      {:poison, "~> 3.1"}
+      {:mailman, "~> 0.4"},
+      {:plug_cowboy, "~> 2.1"},
+      {:plug, "~> 1.7"},
+      {:poison, "~> 4.0"}
     ]
   end
 end

@@ -6,9 +6,10 @@ defmodule Agata do
     import Supervisor.Spec, warn: false
 
     children = [
-      Plug.Adapters.Cowboy.child_spec(:http, Agata.Router, [], [
+      Plug.Cowboy.child_spec(scheme: :http, plug: Agata.Router, options: [
         port: Application.get_env(:agata, :http_port),
-        dispatch: dispatch()
+        dispatch: dispatch(),
+        timeout: Application.get_env(:agata, :web_socket_timeout)
       ]),
       worker(:gen_smtp_server, [Agata.MailServer, [[
         address: Application.get_env(:agata, :smtp_address),
@@ -32,7 +33,7 @@ defmodule Agata do
     [
       {:_, [
         {"/ws", Agata.SocketHandler, []},
-        {:_, Plug.Adapters.Cowboy.Handler, {Agata.Router, []}}
+        {:_, Plug.Cowboy.Handler, {Agata.Router, []}}
       ]}
     ]
   end
